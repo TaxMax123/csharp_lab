@@ -1,0 +1,45 @@
+﻿<Page x:Class="Lab3_4.TransactionData"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Lab3_4"
+        mc:Ignorable="d"
+        Title="TransactionData" Height="150
+        " Width="600">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="10" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <!--Lables-->
+        <Label Grid.Row="1" Grid.Column="1" Content="Valuta" Name="ValutaLable"/>
+        <Label Grid.Row="3" Grid.Column="1" Content="Iznos" Name="IznosLable"/>
+        <Label Grid.Row="5" Grid.Column="1" Content="Hitno" Name="HitnoLable"/>
+        <!--Inputs-->
+        <ComboBox Grid.Row="1" Grid.Column="3" HorizontalAlignment="Left" Width="285" Name="ValutaInput">
+            <!-- TODO: Populate via C# and enum from lab 2-->
+            <ComboBoxItem>HRK</ComboBoxItem>
+            <ComboBoxItem>EUR</ComboBoxItem>
+            <ComboBoxItem>BAM</ComboBoxItem>
+            <ComboBoxItem>AUD</ComboBoxItem>
+            <ComboBoxItem>DEM</ComboBoxItem>
+        </ComboBox>
+        <TextBox Grid.Row="3" Grid.Column="3" Name="IznosInput"/>
+        <CheckBox Grid.Row="5" Grid.Column="3" Content="" Width="15" Height="15" Name="HitnoInput"/>
+    </Grid>
+</Page>

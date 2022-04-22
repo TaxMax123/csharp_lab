@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Diagnostics;
+using System.Dynamic;
+
 namespace Lab3_4
 {
     /// <summary>
@@ -21,164 +23,182 @@ namespace Lab3_4
     /// DE75512108001245126199 
     public partial class MainWindow : Window
     {
-        private static PersonDetails Posiljatelj = new();
-        private static PersonDetails Primatelj = new();
+        private static PersonDetails Sender = new();
+        private static PersonDetails Receiver = new();
+        private static DataValidityChecks DataValidityChecks = new(new Button());
+        private Action<Grid> MyAction = (Grid g) => { return; };
+        private Action MyBindingAction = () => { return; };
         public MainWindow()
-        {
+        { 
             InitializeComponent();
+            MyBindingAction = SenderEventBind;
         }
-        private void Input_TextChanged(object sender, TextChangedEventArgs e)
+        private static T GetObject<T>(Grid grid, String objName)
         {
-            NextPage.IsEnabled = false;
-            NextPage.Background = Brushes.Gray;
+            return (T)grid.FindName(objName);
+        }
+        // ------------------------------
+        // Auto binded events
+        // ------------------------------
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            DataValidityChecks = new(NextPage);
+        }
+        private void FramePage_Loaded(object sender, RoutedEventArgs e)
+        {
+            MyAction = SenderMyAction;
+        }
+        private void FramePage_LoadCompleted(object sender, NavigationEventArgs e)
+        {
+            MyBindingAction();
+            Trace.WriteLine("Frame load complete triggered");
         }
         private void NextPage_Click(object sender, RoutedEventArgs e)
         {
             NextPage.Background = Brushes.Green;
-        }
-        private T getObject<T>(Grid grid, String objName)
-        {
-            return (T)grid.FindName(objName);
-        }
-        //getObject<TextBox>
-        //getObject<Label>
-        private void PersonVerify_Click(object sender, RoutedEventArgs e)
-        {
+            var data = FramePage.Content as Page;
+            var dataGrid = data.Content as Grid;
+            MyAction(dataGrid);
             NextPage.IsEnabled = false;
-            NextPage.Background = Brushes.Gray;
-
-            PersonVerify.Background = Brushes.Pink;
-            var data = FramePage.Content as Page;
-            var dataGrid = data.Content as Grid;
-            var Name = getObject<TextBox>(dataGrid,"ImeInput").Text;
-            var Surname = getObject<TextBox>(dataGrid, "PrezimeInput").Text;
-            var Address = getObject<TextBox>(dataGrid, "AdresaInput").Text;
-            var IBAN = getObject<TextBox>(dataGrid, "IBANInput").Text;
-            var Call = getObject<TextBox>(dataGrid, "PozivInput").Text;
-            var Model = getObject<TextBox>(dataGrid, "ModelInput").Text;
-
-            if (!IsValidIban(IBAN))
-            {
-                getObject<Label>(dataGrid,"IBANLabel").Foreground = Brushes.Red;
-                getObject<TextBox>(dataGrid, "IBANInput").Foreground = Brushes.Red;
-                return;
-            }
-            else
-            {
-                getObject<Label>(dataGrid,"IBANLabel").Foreground = Brushes.Black;
-                getObject<TextBox>(dataGrid,"IBANInput").Foreground = Brushes.Black;
-            }
-
-            if (!IsValidModel(Model))
-            {
-                getObject<Label>(dataGrid,"ModelLabel").Foreground = Brushes.Red;
-                getObject<TextBox>(dataGrid,"ModelInput").Foreground = Brushes.Red;
-                return;
-            }
-            else
-            {
-                getObject<Label>(dataGrid,"ModelLabel").Foreground = Brushes.Black;
-                getObject<TextBox>(dataGrid,"ModelInput").Foreground = Brushes.Black;
-            }
-
-            if (Name.Length < 3)
-            {
-                getObject<Label>(dataGrid, "ImeLabel").Foreground = Brushes.Red;
-                getObject<TextBox>(dataGrid, "ImeInput").Foreground = Brushes.Red;
-                return;
-            }
-            else
-            {
-                getObject<Label>(dataGrid, "ImeLabel").Foreground = Brushes.Black;
-                getObject<TextBox>(dataGrid, "ImeInput").Foreground = Brushes.Black;
-            }
-
-            if (Surname.Length < 3)
-            {
-                getObject<Label>(dataGrid, "PrezimeLabel").Foreground = Brushes.Red;
-                getObject<TextBox>(dataGrid, "PrezimeInput").Foreground = Brushes.Red;
-                return;
-            }
-            else
-            {
-                getObject<Label>(dataGrid, "PrezimeLabel").Foreground = Brushes.Black;
-                getObject<TextBox>(dataGrid, "PrezimeInput").Foreground = Brushes.Black;
-            }
-
-            if (Address.Length < 7)
-            {
-                getObject<Label>(dataGrid, "AdresaLabel").Foreground = Brushes.Red;
-                getObject<TextBox>(dataGrid, "AdresaInput").Foreground = Brushes.Red;
-                return;
-            }
-            else
-            {
-                getObject<Label>(dataGrid, "AdresaLabel").Foreground = Brushes.Black;
-                getObject<TextBox>(dataGrid, "AdresaInput").Foreground = Brushes.Black;
-            }
-
-
-            NextPage.IsEnabled = true;
-            PersonVerify.Background = Brushes.Green;
         }
-
-        private static bool IsValidIban(string bankAccount)
-        {
-            bankAccount = bankAccount.ToUpper(); //IN ORDER TO COPE WITH THE REGEX BELOW
-            if (String.IsNullOrEmpty(bankAccount))
-                return false;
-            if (bankAccount.Length < 4) return false;
-            if (System.Text.RegularExpressions.Regex.IsMatch(bankAccount, "^[A-Z0-9]"))
-            {
-                bankAccount = bankAccount.Replace(" ", String.Empty);
-                string bank =
-                    bankAccount.Substring(4, bankAccount.Length - 4) + bankAccount.Substring(0, 4);
-                int asciiShift = 55;
-                StringBuilder sb = new StringBuilder();
-                foreach (char c in bank)
-                {
-                    int v;
-                    if (Char.IsLetter(c)) v = c - asciiShift;
-                    else v = int.Parse(c.ToString());
-                    sb.Append(v);
-                }
-
-                string checkSumString = sb.ToString();
-                int checksum = int.Parse(checkSumString.Substring(0, 1));
-                for (int i = 1; i < checkSumString.Length; i++)
-                {
-                    int v = int.Parse(checkSumString.Substring(i, 1));
-                    checksum *= 10;
-                    checksum += v;
-                    checksum %= 97;
-                }
-
-                return checksum == 1;
-            }
-            return false;
-        }
-
-
-        private static bool IsValidModel(String Model)
-        {
-            if (Model == "00")
-                return true;
-            if (Model == "99")
-                return true;
-            Console.WriteLine("Invalid Model ");
-            return false;
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        // ------------------------------
+        // Reveiver Lost Focus Functions
+        // ------------------------------
+        private void ReceiverName_LostFocus(object sender, RoutedEventArgs e)
         {
             var data = FramePage.Content as Page;
             var dataGrid = data.Content as Grid;
-            ObjGetters.getObject<TextBox>(dataGrid, "ImeInput").TextChanged += Input_TextChanged;
-            ObjGetters.getObject<TextBox>(dataGrid, "PrezimeInput").TextChanged += Input_TextChanged;
-            ObjGetters.getObject<TextBox>(dataGrid, "AdresaInput").TextChanged += Input_TextChanged;
-            ObjGetters.getObject<TextBox>(dataGrid, "IBANInput").TextChanged += Input_TextChanged;
-            ObjGetters.getObject<TextBox>(dataGrid, "PozivInput").TextChanged += Input_TextChanged;
-            ObjGetters.getObject<TextBox>(dataGrid, "ModelInput").TextChanged += Input_TextChanged;
+            var Name = GetObject<TextBox>(dataGrid, "ReceiverNameInput");
+            var LName = GetObject<Label>(dataGrid, "ReceiverNameLabel");
+            DataValidityChecks.CheckName(Name.Text, LName, Name);
+        }
+        private void ReceiverSurname_LostFocus(object sender, RoutedEventArgs e)
+        {
+            var data = FramePage.Content as Page;
+            var dataGrid = data.Content as Grid;
+            var Surname = GetObject<TextBox>(dataGrid, "ReceiverSurnameInput");
+            var LSurname = GetObject<Label>(dataGrid, "ReceiverSurnameLabel");
+            DataValidityChecks.CheckSurname(Surname.Text, LSurname, Surname);
+        }
+        private void ReceiverAddress_LostFocus(object sender, RoutedEventArgs e)
+        {
+            var data = FramePage.Content as Page;
+            var dataGrid = data.Content as Grid;
+            var Address = GetObject<TextBox>(dataGrid, "ReceiverAddressInput");
+            var LAddress = GetObject<Label>(dataGrid, "ReceiverAddressLabel");
+            DataValidityChecks.CheckAddress(Address.Text, LAddress, Address);
+        }
+        private void ReceiverIBAN_LostFocus(object sender, RoutedEventArgs e)
+        {
+            var data = FramePage.Content as Page;
+            var dataGrid = data.Content as Grid;
+            var IBAN = GetObject<TextBox>(dataGrid, "ReceiverIBANInput");
+            var LIBAN = GetObject<Label>(dataGrid, "ReceiverIBANLabel");
+            DataValidityChecks.CheckIBAN(IBAN.Text, LIBAN, IBAN);
+        }
+        private void ReceiverModel_LostFocus(object sender, RoutedEventArgs e)
+        {
+            var data = FramePage.Content as Page;
+            var dataGrid = data.Content as Grid;
+            var Model = GetObject<ComboBox>(dataGrid, "ReceiverModelInput");
+            var LModel = GetObject<Label>(dataGrid, "ReceiverModelLabel");
+            DataValidityChecks.CheckModel(Model.Text, LModel,Model);
+        }
+        // ------------------------------
+        // Sender Lost Focus Functions
+        // ------------------------------
+        private void SenderName_LostFocus(object sender, RoutedEventArgs e)
+        {
+            var data = FramePage.Content as Page;
+            var dataGrid = data.Content as Grid;
+            var Name = GetObject<TextBox>(dataGrid, "SenderNameInput");
+            var LName = GetObject<Label>(dataGrid, "SenderNameLabel");
+            DataValidityChecks.CheckName(Name.Text, LName, Name);
+        }
+        private void SenderSurname_LostFocus(object sender, RoutedEventArgs e)
+        {
+            var data = FramePage.Content as Page;
+            var dataGrid = data.Content as Grid;
+            var Surname = GetObject<TextBox>(dataGrid, "SenderSurnameInput");
+            var LSurname = GetObject<Label>(dataGrid, "SenderSurnameLabel");
+            DataValidityChecks.CheckSurname(Surname.Text, LSurname, Surname);
+        }
+        private void SenderAddress_LostFocus(object sender, RoutedEventArgs e)
+        {
+            var data = FramePage.Content as Page;
+            var dataGrid = data.Content as Grid;
+            var Address = GetObject<TextBox>(dataGrid, "SenderAddressInput");
+            var LAddress = GetObject<Label>(dataGrid, "SenderAddressLabel");
+            DataValidityChecks.CheckAddress(Address.Text, LAddress, Address);
+        }
+        private void SenderIBAN_LostFocus(object sender, RoutedEventArgs e)
+        {
+            var data = FramePage.Content as Page;
+            var dataGrid = data.Content as Grid;
+            var IBAN = GetObject<TextBox>(dataGrid, "SenderIBANInput");
+            var LIBAN = GetObject<Label>(dataGrid, "SenderIBANLabel");
+            DataValidityChecks.CheckIBAN(IBAN.Text, LIBAN, IBAN);
+        }
+        private void SenderModel_LostFocus(object sender, RoutedEventArgs e)
+        {
+            var data = FramePage.Content as Page;
+            var dataGrid = data.Content as Grid;
+            var Model = GetObject<ComboBox>(dataGrid, "SenderModelInput");
+            var LModel = GetObject<Label>(dataGrid, "SenderModelLabel");
+            DataValidityChecks.CheckModel(Model.Text, LModel, Model);
+        }
+        // ------------------------------
+        // Event bindings for pages
+        // ------------------------------
+        private void ReceiverEventBind()
+        {
+            var MyPage = FramePage.Content as Page;
+            var MyGrid = MyPage.Content as Grid;
+            GetObject<TextBox>(MyGrid, "ReceiverNameInput").LostFocus += ReceiverName_LostFocus;
+            GetObject<TextBox>(MyGrid, "ReceiverSurnameInput").LostFocus += ReceiverSurname_LostFocus;
+            GetObject<TextBox>(MyGrid, "ReceiverAddressInput").LostFocus += ReceiverAddress_LostFocus;
+            GetObject<TextBox>(MyGrid, "ReceiverIBANInput").LostFocus += ReceiverIBAN_LostFocus;
+            GetObject<ComboBox>(MyGrid, "ReceiverModelInput").LostFocus += ReceiverModel_LostFocus;
+        }
+        private void SenderEventBind()
+        {
+            var MyPage = FramePage.Content as Page;
+            var MyGrid = MyPage.Content as Grid;
+            GetObject<TextBox>(MyGrid, "SenderNameInput").LostFocus += SenderName_LostFocus;
+            GetObject<TextBox>(MyGrid, "SenderSurnameInput").LostFocus += SenderSurname_LostFocus;
+            GetObject<TextBox>(MyGrid, "SenderAddressInput").LostFocus += SenderAddress_LostFocus;
+            GetObject<TextBox>(MyGrid, "SenderIBANInput").LostFocus += SenderIBAN_LostFocus;
+            GetObject<ComboBox>(MyGrid, "SenderModelInput").LostFocus += SenderModel_LostFocus;
+        }
+
+        // ------------------------------
+        // Action<Grid> functions
+        // ------------------------------
+        private void ReceiverMyAction(Grid grid)
+        {
+            Receiver.Name = GetObject<TextBox>(grid, "ReceiverNameInput").Text;
+            Receiver.Surname = GetObject<TextBox>(grid, "ReceiverSurnameInput").Text;
+            Receiver.Address = GetObject<TextBox>(grid, "ReceiverAddressInput").Text;
+            Receiver.IBAN = GetObject<TextBox>(grid, "ReceiverIBANInput").Text;
+            Receiver.Call = GetObject<TextBox>(grid, "ReceiverCallInput").Text;
+            Receiver.Model = GetObject<ComboBox>(grid, "ReceiverModelInput").Text;
+
+            MyAction = (Grid grid) => { };
+            MyBindingAction = () => { };
+            FramePage.NavigationService.Source = new Uri("Pages/TransactionData.xaml", UriKind.Relative);
+        }
+        private void SenderMyAction(Grid grid)
+        {
+            Sender.Name = GetObject<TextBox>(grid, "SenderNameInput").Text;
+            Sender.Surname = GetObject<TextBox>(grid, "SenderSurnameInput").Text;
+            Sender.Address = GetObject<TextBox>(grid, "SenderAddressInput").Text;
+            Sender.IBAN = GetObject<TextBox>(grid, "SenderIBANInput").Text;
+            Sender.Call = GetObject<TextBox>(grid, "SenderCallInput").Text;
+            Sender.Model = GetObject<ComboBox>(grid, "SenderModelInput").Text;
+
+            MyAction = ReceiverMyAction;
+            MyBindingAction = ReceiverEventBind;
+            FramePage.NavigationService.Source = new Uri("Pages/Receiver.xaml", UriKind.Relative);
         }
     }
 

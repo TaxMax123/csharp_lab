@@ -10,24 +10,18 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace Lab3_4
 {
     /// <summary>
-    /// Interaction logic for Person.xaml
+    /// Interaction logic for TransactionData.xaml
     /// </summary>
-    public partial class Person : Page
+    public partial class TransactionData : Page
     {
-        public Person()
+        public TransactionData()
         {
             InitializeComponent();
-        }
-
-        private void Input_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
         }
     }
 }
