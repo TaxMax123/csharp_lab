@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Lab3_4"
         mc:Ignorable="d"
-        Title="MainWindow" Height="420" Width="650" Background="LightBlue" Loaded="Window_Loaded">
+        Title="MainWindow" Height="350" Width="650" Background="LightBlue" Loaded="Window_Loaded">
     <Grid Margin="10,10,10,10" Name="PersonGrid">
 
         <Grid.ColumnDefinitions>
@@ -17,31 +17,29 @@
             <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="30"/>
-            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         
         <Frame x:Name="FramePage" Grid.Row="0" Source="Pages\Sender.xaml" Grid.Column="1" Grid.RowSpan="3" NavigationUIVisibility="Hidden" Loaded="FramePage_Loaded" LoadCompleted="FramePage_LoadCompleted"/>
-        <Label x:Name="PosiljateljLabel" Content="Posiljatelj" Width="80" Height="25" Grid.Row="0" Grid.Column="0"/>
-        <Label x:Name="PrimateljLabel" Content="Primatelj" Width="80" Height="25" Grid.Row="1" Grid.Column="0"/>
-        
-        <Grid Grid.Row="3" Grid.Column="1">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Button Grid.Row="0" Grid.Column="1" 
+        <Grid Grid.Row="0" Grid.RowSpan="3" Grid.Column="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="25"/>
+            </Grid.RowDefinitions>
+            <Label x:Name="PosiljateljLabel" Content="Posiljatelj" Width="80" Height="25" Grid.Row="0" Grid.Column="0"/>
+            <Label x:Name="PrimateljLabel" Content="Primatelj" Width="80" Height="25" Grid.Row="1" Grid.Column="0" Visibility="Hidden"/>
+            <Label x:Name="DataLabel" Content="Valuta i iznos" Width="80" Height="25" Grid.Row="2" Grid.Column="0" Visibility="Hidden"/>
+        </Grid>
+        <Button Grid.Row="3" Grid.Column="1" 
                         Width="70" Height="22"
                         Background="Gray" Foreground="Black"
                         BorderBrush="Black" BorderThickness="1"
                         Click="NextPage_Click" ClickMode="Press"
                         Content="Next Page" x:Name="NextPage" 
                         IsEnabled="False"/>
-            </Grid>
-        </Grid>
     </Grid>
 </Window>
     

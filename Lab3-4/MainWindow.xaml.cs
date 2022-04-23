@@ -204,20 +204,6 @@ namespace Lab3_4
         // ------------------------------
         // Action<Grid> functions
         // ------------------------------
-        private void ReceiverMyAction(Grid grid)
-        {
-            Receiver.Name = GetObject<TextBox>(grid, "ReceiverNameInput").Text;
-            Receiver.Surname = GetObject<TextBox>(grid, "ReceiverSurnameInput").Text;
-            Receiver.Address = GetObject<TextBox>(grid, "ReceiverAddressInput").Text;
-            Receiver.IBAN = GetObject<TextBox>(grid, "ReceiverIBANInput").Text;
-            Receiver.Call = GetObject<TextBox>(grid, "ReceiverCallInput").Text;
-            Receiver.Model = GetObject<ComboBox>(grid, "ReceiverModelInput").Text;
-
-            MyAction = TransactionDataMyAction;
-            MyBindingAction = TransactionDataEventBind;
-            FramePage.NavigationService.Source = new Uri("Pages/TransactionData.xaml", UriKind.Relative);
-            DataValidityChecks.ResetStatus();
-        }
         private void SenderMyAction(Grid grid)
         {
             Sender.Name = GetObject<TextBox>(grid, "SenderNameInput").Text;
@@ -226,18 +212,34 @@ namespace Lab3_4
             Sender.IBAN = GetObject<TextBox>(grid, "SenderIBANInput").Text;
             Sender.Call = GetObject<TextBox>(grid, "SenderCallInput").Text;
             Sender.Model = GetObject<ComboBox>(grid, "SenderModelInput").Text;
-
+            PosiljateljLabel.Foreground = Brushes.Green;
+            PrimateljLabel.Visibility=Visibility.Visible;
             MyAction = ReceiverMyAction;
             MyBindingAction = ReceiverEventBind;
             FramePage.NavigationService.Source = new Uri("Pages/Receiver.xaml", UriKind.Relative);
             DataValidityChecks.ResetStatus();
         }
-
+        private void ReceiverMyAction(Grid grid)
+        {
+            Receiver.Name = GetObject<TextBox>(grid, "ReceiverNameInput").Text;
+            Receiver.Surname = GetObject<TextBox>(grid, "ReceiverSurnameInput").Text;
+            Receiver.Address = GetObject<TextBox>(grid, "ReceiverAddressInput").Text;
+            Receiver.IBAN = GetObject<TextBox>(grid, "ReceiverIBANInput").Text;
+            Receiver.Call = GetObject<TextBox>(grid, "ReceiverCallInput").Text;
+            Receiver.Model = GetObject<ComboBox>(grid, "ReceiverModelInput").Text;
+            PrimateljLabel.Foreground = Brushes.Green;
+            DataLabel.Visibility=Visibility.Visible;
+            MyAction = TransactionDataMyAction;
+            MyBindingAction = TransactionDataEventBind;
+            FramePage.NavigationService.Source = new Uri("Pages/TransactionData.xaml", UriKind.Relative);
+            DataValidityChecks.ResetStatus();
+        }
         private void TransactionDataMyAction(Grid grid)
         {
             Currency = GetObject<ComboBox>(grid, "ValutaInput").Text;
             Amount = float.Parse(GetObject<TextBox>(grid, "IznosInput").Text);
             Hitno = GetObject<CheckBox>(grid, "HitnoInput").IsChecked;
+            DataLabel.Foreground = Brushes.Green;
             DataValidityChecks.ResetStatus();
             // do some shit to save to db
         }
