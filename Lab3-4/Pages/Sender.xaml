@@ -43,9 +43,6 @@
         <TextBox Grid.Row="4" Grid.Column="2" Name="SenderIBANInput"/>
         <TextBox Grid.Row="5" Grid.Column="2" Name="SenderCallInput"/>
         <ComboBox Grid.Row="6" Grid.Column="2" Name="SenderModelInput">
-            <ComboBoxItem></ComboBoxItem>
-            <ComboBoxItem>00</ComboBoxItem>
-            <ComboBoxItem>99</ComboBoxItem>
         </ComboBox>
     </Grid>
 </Page>

@@ -14,6 +14,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Diagnostics;
 using System.Dynamic;
+using System.Net.Http;
+using System.Text.Json;
 
 namespace Lab3_4
 {
@@ -23,12 +25,11 @@ namespace Lab3_4
     /// DE75512108001245126199 
     public partial class MainWindow : Window
     {
-        private static PersonDetails Sender = new();
-        private static PersonDetails Receiver = new();
+        private static UniverzalniNalog nalog = new();
         private static DataValidityChecks DataValidityChecks = new(new Button());
-        private bool? Hitno = false;
-        private float Amount = 0;
-        private string Currency = String.Empty;
+
+        private List<String> Models = null;
+        private List<String> Currencies = null;
 
         private Action<Grid> MyAction = (Grid g) => { return; };
         private Action MyBindingAction = () => { return; };
@@ -36,6 +37,18 @@ namespace Lab3_4
         { 
             InitializeComponent();
             MyBindingAction = SenderEventBind;
+            var ModelsUrl = "https://localhost:7242/api/enum/models";
+            var CurrenciesUrl = "https://localhost:7242/api/enum/currencies";
+
+            var client = new HttpClient();
+            var resp = client.GetAsync(ModelsUrl).Result;
+            var data = resp.Content.ReadAsStringAsync().Result;
+            var result = JsonSerializer.Deserialize<List<string>>(data);
+            Models = result;
+            resp = client.GetAsync(CurrenciesUrl).Result;
+            data = resp.Content.ReadAsStringAsync().Result;
+            result = JsonSerializer.Deserialize<List<string>>(data);
+            Currencies = result;
         }
         private static T GetObject<T>(Grid grid, String objName)
         {
@@ -55,7 +68,6 @@ namespace Lab3_4
         private void FramePage_LoadCompleted(object sender, NavigationEventArgs e)
         {
             MyBindingAction();
-            Trace.WriteLine("Frame load complete triggered");
         }
         private void NextPage_Click(object sender, RoutedEventArgs e)
         {
@@ -182,6 +194,8 @@ namespace Lab3_4
             GetObject<TextBox>(MyGrid, "ReceiverAddressInput").LostFocus += ReceiverAddress_LostFocus;
             GetObject<TextBox>(MyGrid, "ReceiverIBANInput").LostFocus += ReceiverIBAN_LostFocus;
             GetObject<ComboBox>(MyGrid, "ReceiverModelInput").LostFocus += ReceiverModel_LostFocus;
+            GetObject<ComboBox>(MyGrid, "ReceiverModelInput").ItemsSource = Models;
+
         }
         private void SenderEventBind()
         {
@@ -192,6 +206,7 @@ namespace Lab3_4
             GetObject<TextBox>(MyGrid, "SenderAddressInput").LostFocus += SenderAddress_LostFocus;
             GetObject<TextBox>(MyGrid, "SenderIBANInput").LostFocus += SenderIBAN_LostFocus;
             GetObject<ComboBox>(MyGrid, "SenderModelInput").LostFocus += SenderModel_LostFocus;
+            GetObject<ComboBox>(MyGrid, "SenderModelInput").ItemsSource = Models;
         }
         private void TransactionDataEventBind()
         {
@@ -199,6 +214,7 @@ namespace Lab3_4
             var MyGrid = MyPage.Content as Grid;
             GetObject<ComboBox>(MyGrid, "ValutaInput").LostFocus += TransactionDataCurrency_LostFocus;
             GetObject<TextBox>(MyGrid, "IznosInput").LostFocus += TransactionDataAmount_LostFocus;
+            GetObject<ComboBox>(MyGrid, "ValutaInput").ItemsSource = Currencies;
         }
 
         // ------------------------------
@@ -206,12 +222,12 @@ namespace Lab3_4
         // ------------------------------
         private void SenderMyAction(Grid grid)
         {
-            Sender.Name = GetObject<TextBox>(grid, "SenderNameInput").Text;
-            Sender.Surname = GetObject<TextBox>(grid, "SenderSurnameInput").Text;
-            Sender.Address = GetObject<TextBox>(grid, "SenderAddressInput").Text;
-            Sender.IBAN = GetObject<TextBox>(grid, "SenderIBANInput").Text;
-            Sender.Call = GetObject<TextBox>(grid, "SenderCallInput").Text;
-            Sender.Model = GetObject<ComboBox>(grid, "SenderModelInput").Text;
+            nalog.Platitelj.Ime = GetObject<TextBox>(grid, "SenderNameInput").Text;
+            nalog.Platitelj.Prezime = GetObject<TextBox>(grid, "SenderSurnameInput").Text;
+            nalog.Platitelj.Adresa = GetObject<TextBox>(grid, "SenderAddressInput").Text;
+            nalog.Platitelj.BrojRacunaIliIban = GetObject<TextBox>(grid, "SenderIBANInput").Text;
+            nalog.Platitelj.PozivNaBroj = GetObject<TextBox>(grid, "SenderCallInput").Text;
+            nalog.Platitelj.Model = GetObject<ComboBox>(grid, "SenderModelInput").Text;
             PosiljateljLabel.Foreground = Brushes.Green;
             PrimateljLabel.Visibility=Visibility.Visible;
             MyAction = ReceiverMyAction;
@@ -221,12 +237,12 @@ namespace Lab3_4
         }
         private void ReceiverMyAction(Grid grid)
         {
-            Receiver.Name = GetObject<TextBox>(grid, "ReceiverNameInput").Text;
-            Receiver.Surname = GetObject<TextBox>(grid, "ReceiverSurnameInput").Text;
-            Receiver.Address = GetObject<TextBox>(grid, "ReceiverAddressInput").Text;
-            Receiver.IBAN = GetObject<TextBox>(grid, "ReceiverIBANInput").Text;
-            Receiver.Call = GetObject<TextBox>(grid, "ReceiverCallInput").Text;
-            Receiver.Model = GetObject<ComboBox>(grid, "ReceiverModelInput").Text;
+            nalog.Primatelj.Ime = GetObject<TextBox>(grid, "ReceiverNameInput").Text;
+            nalog.Primatelj.Prezime = GetObject<TextBox>(grid, "ReceiverSurnameInput").Text;
+            nalog.Primatelj.Adresa = GetObject<TextBox>(grid, "ReceiverAddressInput").Text;
+            nalog.Primatelj.BrojRacunaIliIban = GetObject<TextBox>(grid, "ReceiverIBANInput").Text;
+            nalog.Primatelj.PozivNaBroj = GetObject<TextBox>(grid, "ReceiverCallInput").Text;
+            nalog.Primatelj.Model = GetObject<ComboBox>(grid, "ReceiverModelInput").Text;
             PrimateljLabel.Foreground = Brushes.Green;
             DataLabel.Visibility=Visibility.Visible;
             MyAction = TransactionDataMyAction;
@@ -236,13 +252,45 @@ namespace Lab3_4
         }
         private void TransactionDataMyAction(Grid grid)
         {
-            Currency = GetObject<ComboBox>(grid, "ValutaInput").Text;
-            Amount = float.Parse(GetObject<TextBox>(grid, "IznosInput").Text);
-            Hitno = GetObject<CheckBox>(grid, "HitnoInput").IsChecked;
+            var ConvertCurrency = GetConverter();
+            var key = GetObject<ComboBox>(grid, "ValutaInput").Text;
+            nalog.ValutaPlacanja = ConvertCurrency[key];
+            nalog.Iznos = float.Parse(GetObject<TextBox>(grid, "IznosInput").Text);
+            nalog.Hitno = GetObject<CheckBox>(grid, "HitnoInput").IsChecked;
+            nalog.DatumIzvrsenja = DateTime.Now;
             DataLabel.Foreground = Brushes.Green;
+
+            var client = new HttpClient();
+            var ser = JsonSerializer.Serialize(nalog);
+            Trace.WriteLine(ser);
+            var content = new StringContent(ser, Encoding.UTF8, "application/json");
+            Trace.WriteLine(content);
+            var result = client.PostAsync("https://localhost:7242/api/new", content).Result;
+            Trace.Write(result.Content.ReadAsStringAsync().Result);
+
             DataValidityChecks.ResetStatus();
-            // do some shit to save to db
+            nalog = new UniverzalniNalog();
+
+        }
+
+        private Dictionary<string, int> GetConverter()
+        {
+            Dictionary<String, int> Currency = new();
+                Currency.Add("Eur", 0);
+                Currency.Add("Hrk", 1);
+                Currency.Add("Aud", 2);
+                Currency.Add("Cad", 3);
+                Currency.Add("Dkk", 4);
+                Currency.Add("Huf", 5);
+                Currency.Add("Jpy", 6);
+                Currency.Add("Nok", 7);
+                Currency.Add("Sek", 8);
+                Currency.Add("Chf", 9);
+                Currency.Add("Gbp", 10);
+                Currency.Add("Usd", 11);
+                Currency.Add("Bam", 12);
+                Currency.Add("Pln", 13);
+            return Currency;
         }
     }
-
 }

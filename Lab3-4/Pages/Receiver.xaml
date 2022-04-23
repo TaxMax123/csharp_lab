@@ -43,9 +43,6 @@
         <TextBox Grid.Row="4" Grid.Column="2" Name="ReceiverIBANInput"/>
         <TextBox Grid.Row="5" Grid.Column="2" Name="ReceiverCallInput"/>
         <ComboBox Grid.Row="6" Grid.Column="2" Name="ReceiverModelInput">
-            <ComboBoxItem></ComboBoxItem>
-            <ComboBoxItem>00</ComboBoxItem>
-            <ComboBoxItem>99</ComboBoxItem>
         </ComboBox>
         <!-- Option checkbox -->
         <Label Grid.Row="7" Grid.Column="1" Content="Tip Osobe" Name="ReceiverTypeLabel"/>

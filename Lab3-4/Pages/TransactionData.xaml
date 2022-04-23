@@ -31,12 +31,6 @@
         <Label Grid.Row="5" Grid.Column="1" Content="Hitno" Name="HitnoLabel"/>
         <!--Inputs-->
         <ComboBox Grid.Row="1" Grid.Column="3" HorizontalAlignment="Center" Name="ValutaInput" Width="180">
-            <!-- TODO: Populate via C# and enum from lab 2-->
-            <ComboBoxItem Width="180">HRK</ComboBoxItem>
-            <ComboBoxItem Width="180">EUR</ComboBoxItem>
-            <ComboBoxItem Width="180">BAM</ComboBoxItem>
-            <ComboBoxItem Width="180">AUD</ComboBoxItem>
-            <ComboBoxItem Width="180">DEM</ComboBoxItem>
         </ComboBox>
         <TextBox Grid.Row="3" Grid.Column="3" Name="IznosInput"/>
         <CheckBox Grid.Row="5" Grid.Column="3" Content="" Width="15" Height="15" Name="HitnoInput"/>

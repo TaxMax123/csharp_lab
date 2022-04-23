@@ -1,8 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Lab3-4"
+    "\\Lab4",
+    "\\Lab4\\wpf-api"
   ],
-  "SelectedNode": "\\Lab3-4\\Lab3-4.sln",
+  "SelectedNode": "\\Lab4\\wpf-api\\wpf-api.csproj",
   "PreviewInSolutionExplorer": false
 }
