@@ -27,12 +27,12 @@ namespace Lab3_4
 
         private void ReceiverTypeFizickaInput_Click(object sender, RoutedEventArgs e)
         {
-            ReceiverTypePrivnaInput.IsEnabled = false;
+            ReceiverTypePrivnaInput.IsChecked = false;
         }
 
         private void ReceiverTypePrivnaInput_Click(object sender, RoutedEventArgs e)
         {
-            ReceiverTypeFizickaInput.IsEnabled = false;
+            ReceiverTypeFizickaInput.IsChecked = false;
         }
     }
 }

@@ -5,8 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Lab3_4"
         mc:Ignorable="d"
-        Title="TransactionData" Height="150
-        " Width="600">
+        Title="TransactionData" Height="150" Width="600">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10" />
@@ -27,17 +26,17 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <!--Lables-->
-        <Label Grid.Row="1" Grid.Column="1" Content="Valuta" Name="ValutaLable"/>
-        <Label Grid.Row="3" Grid.Column="1" Content="Iznos" Name="IznosLable"/>
-        <Label Grid.Row="5" Grid.Column="1" Content="Hitno" Name="HitnoLable"/>
+        <Label Grid.Row="1" Grid.Column="1" Content="Valuta" Name="ValutaLabel"/>
+        <Label Grid.Row="3" Grid.Column="1" Content="Iznos" Name="IznosLabel"/>
+        <Label Grid.Row="5" Grid.Column="1" Content="Hitno" Name="HitnoLabel"/>
         <!--Inputs-->
-        <ComboBox Grid.Row="1" Grid.Column="3" HorizontalAlignment="Left" Width="285" Name="ValutaInput">
+        <ComboBox Grid.Row="1" Grid.Column="3" HorizontalAlignment="Center" Name="ValutaInput" Width="285">
             <!-- TODO: Populate via C# and enum from lab 2-->
-            <ComboBoxItem>HRK</ComboBoxItem>
-            <ComboBoxItem>EUR</ComboBoxItem>
-            <ComboBoxItem>BAM</ComboBoxItem>
-            <ComboBoxItem>AUD</ComboBoxItem>
-            <ComboBoxItem>DEM</ComboBoxItem>
+            <ComboBoxItem Width="285">HRK</ComboBoxItem>
+            <ComboBoxItem Width="285">EUR</ComboBoxItem>
+            <ComboBoxItem Width="285">BAM</ComboBoxItem>
+            <ComboBoxItem Width="285">AUD</ComboBoxItem>
+            <ComboBoxItem Width="285">DEM</ComboBoxItem>
         </ComboBox>
         <TextBox Grid.Row="3" Grid.Column="3" Name="IznosInput"/>
         <CheckBox Grid.Row="5" Grid.Column="3" Content="" Width="15" Height="15" Name="HitnoInput"/>

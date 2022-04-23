@@ -26,6 +26,10 @@ namespace Lab3_4
         private static PersonDetails Sender = new();
         private static PersonDetails Receiver = new();
         private static DataValidityChecks DataValidityChecks = new(new Button());
+        private bool? Hitno = false;
+        private float Amount = 0;
+        private string Currency = String.Empty;
+
         private Action<Grid> MyAction = (Grid g) => { return; };
         private Action MyBindingAction = () => { return; };
         public MainWindow()
@@ -148,6 +152,25 @@ namespace Lab3_4
             DataValidityChecks.CheckModel(Model.Text, LModel, Model);
         }
         // ------------------------------
+        // Transaction Data Lost Focus Functions
+        private void TransactionDataCurrency_LostFocus(object sender, RoutedEventArgs e)
+        {
+            var data = FramePage.Content as Page;
+            var dataGrid = data.Content as Grid;
+            var Currency = GetObject<ComboBox>(dataGrid, "ValutaInput");
+            var LCurrency = GetObject<Label>(dataGrid, "ValutaLabel");
+            DataValidityChecks.CheckCurrency(Currency.Text, LCurrency, Currency);
+        }
+        private void TransactionDataAmount_LostFocus(object sender, RoutedEventArgs e)
+        {
+            var data = FramePage.Content as Page;
+            var dataGrid = data.Content as Grid;
+            var Amount = GetObject<TextBox>(dataGrid, "IznosInput");
+            var LAmount = GetObject<Label>(dataGrid, "IznosLabel");
+            DataValidityChecks.CheckAmount(Amount.Text, LAmount, Amount);
+        }
+        // ------------------------------
+        // ------------------------------
         // Event bindings for pages
         // ------------------------------
         private void ReceiverEventBind()
@@ -170,6 +193,13 @@ namespace Lab3_4
             GetObject<TextBox>(MyGrid, "SenderIBANInput").LostFocus += SenderIBAN_LostFocus;
             GetObject<ComboBox>(MyGrid, "SenderModelInput").LostFocus += SenderModel_LostFocus;
         }
+        private void TransactionDataEventBind()
+        {
+            var MyPage = FramePage.Content as Page;
+            var MyGrid = MyPage.Content as Grid;
+            GetObject<ComboBox>(MyGrid, "ValutaInput").LostFocus += TransactionDataCurrency_LostFocus;
+            GetObject<TextBox>(MyGrid, "IznosInput").LostFocus += TransactionDataAmount_LostFocus;
+        }
 
         // ------------------------------
         // Action<Grid> functions
@@ -183,9 +213,10 @@ namespace Lab3_4
             Receiver.Call = GetObject<TextBox>(grid, "ReceiverCallInput").Text;
             Receiver.Model = GetObject<ComboBox>(grid, "ReceiverModelInput").Text;
 
-            MyAction = (Grid grid) => { };
-            MyBindingAction = () => { };
+            MyAction = TransactionDataMyAction;
+            MyBindingAction = TransactionDataEventBind;
             FramePage.NavigationService.Source = new Uri("Pages/TransactionData.xaml", UriKind.Relative);
+            DataValidityChecks.ResetStatus();
         }
         private void SenderMyAction(Grid grid)
         {
@@ -199,6 +230,16 @@ namespace Lab3_4
             MyAction = ReceiverMyAction;
             MyBindingAction = ReceiverEventBind;
             FramePage.NavigationService.Source = new Uri("Pages/Receiver.xaml", UriKind.Relative);
+            DataValidityChecks.ResetStatus();
+        }
+
+        private void TransactionDataMyAction(Grid grid)
+        {
+            Currency = GetObject<ComboBox>(grid, "ValutaInput").Text;
+            Amount = float.Parse(GetObject<TextBox>(grid, "IznosInput").Text);
+            Hitno = GetObject<CheckBox>(grid, "HitnoInput").IsChecked;
+            DataValidityChecks.ResetStatus();
+            // do some shit to save to db
         }
     }
 

@@ -21,6 +21,8 @@ namespace Lab3_4
         bool ValidAddress = false;
         bool ValidIBAN = false;
         bool ValidModel = false;
+        bool ValidCurrency = false;
+        bool ValidAmount = false;
 
         public void ResetStatus()
         {
@@ -29,6 +31,8 @@ namespace Lab3_4
             ValidAddress = false;
             ValidIBAN = false;
             ValidModel = false;
+            ValidCurrency = false;
+            ValidAmount = false;
         }
 
         public void CheckIBAN(string IBAN, Label IBANLabel, TextBox IBANInput)
@@ -111,6 +115,44 @@ namespace Lab3_4
             EnableNextPage();
         }
 
+        public void CheckCurrency(string Currency, Label CurrencyLabel, ComboBox CurrenyInput)
+        {
+            var FGColor = Brushes.Black;
+            ValidCurrency = true;
+            if (Currency.Length != 3)
+            {
+                ValidAddress = false;
+                FGColor = Brushes.Red;
+            }
+            CurrencyLabel.Foreground = FGColor;
+            EnableNextPage();
+        }
+        
+        public void CheckAmount(string Amount, Label AmountLAbel, TextBox AmoutInput)
+        {
+            var FGColor = Brushes.Red;
+            ValidAmount = false;
+            if (Amount.Length > 3)
+            {
+                try
+                {
+                    var p = float.Parse(Amount);
+                    if (p > 0)
+                    {
+                        ValidAmount = true;
+                        FGColor = Brushes.Black;
+                    }
+                }
+                catch (Exception)
+                {
+                    ;
+                }
+            }
+            AmountLAbel.Foreground = FGColor;
+            AmoutInput.Foreground = FGColor;
+            EnableNextPage();
+        }
+        
         private static bool IsValidIban(string bankAccount)
         {
             bankAccount = bankAccount.ToUpper(); //IN ORDER TO COPE WITH THE REGEX BELOW
@@ -157,10 +199,13 @@ namespace Lab3_4
             return false;
         }
 
-
         private void EnableNextPage()
         {
             if (ValidName && ValidSurname && ValidAddress && ValidIBAN && ValidModel)
+            {
+                NextPage.IsEnabled = true;
+            }
+            if (ValidAmount && ValidCurrency)
             {
                 NextPage.IsEnabled = true;
             }
