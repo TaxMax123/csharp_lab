@@ -1,6 +1,11 @@
+using WebApplication1.Context;
+using WebApplication1.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddDbContext<UniversalOrderContext>();
+builder.Services.AddScoped<IUserOrderService, UserOrderService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
