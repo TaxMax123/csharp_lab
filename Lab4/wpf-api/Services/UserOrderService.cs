@@ -13,9 +13,21 @@ public class UserOrderService : IUserOrderService
 {
     private readonly UniversalOrderContext _universalOrderContext;
 
+
     public UserOrderService(UniversalOrderContext universalOrderContext)
     {
         _universalOrderContext = universalOrderContext;
+    }
+
+    public async Task<List<string>> GetModels()
+    {
+        await Task.Yield();
+        List<string> rList = new()
+        {
+            "00",
+            "99"
+        };
+        return rList;
     }
 
     public async Task<List<string>> GetCurrencies()
@@ -55,6 +67,5 @@ public class UserOrderService : IUserOrderService
         sth.UniversalOrders.Add(order);
         var res = await _universalOrderContext.SaveChangesAsync();
         return "Created transaction";
-        return JsonSerializer.Serialize(order);
     }
 }

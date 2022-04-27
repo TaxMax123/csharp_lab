@@ -16,21 +16,17 @@ public class UniversalOrderController : Controller
     }
 
     [HttpGet]
+    [Route("/api/enum/currencies")]
+    public async  Task<List<string>> GetCurrencies() => await _userOrderService.GetCurrencies();
+
+
+    [HttpGet]
     [Route("/api/enum/models")]
-    public List<string> GetModels()
-    {
-        var rList = new List<string>
-        {
-            "00",
-            "99"
-        };
-        return rList;
-    }
+    public async Task<List<string>> GetModels() => await _userOrderService.GetModels();
+
 
     [HttpPost]
     [Route("/api/new")]
-    public string PostOrder(UniversalOrderPostDto universalOrder)
-    {
-        return _userOrderService.PostUniversalOrder(universalOrder).Result;
-    }
+    public async Task<string> PostOrder(UniversalOrderPostDto universalOrder) =>
+        await _userOrderService.PostUniversalOrder(universalOrder);
 }

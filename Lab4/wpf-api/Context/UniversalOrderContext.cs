@@ -5,9 +5,9 @@ namespace WebApplication1.Context;
 
 public class UniversalOrderContext : DbContext
 {
-    public DbSet<Currency> Currencies { get; set; }
-    public DbSet<CurrencyRatio> CurrencyRatios { get; set; }
-    public DbSet<UniversalOrder> UniversalOrders { get; set; }
+    public DbSet<Currency> Currencies { get; set; } = null!;
+    public DbSet<CurrencyRatio> CurrencyRatios { get; set; } = null!;
+    public DbSet<UniversalOrder> UniversalOrders { get; set; } = null!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

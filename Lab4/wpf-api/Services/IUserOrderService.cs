@@ -4,6 +4,7 @@ namespace WebApplication1.Services;
 
 public interface IUserOrderService
 {
+    public Task<List<string>> GetModels();
     public Task<List<string>> GetCurrencies();
     public Task<string> PostUniversalOrder(UniversalOrderPostDto universalOrder);
 }
