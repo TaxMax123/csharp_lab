@@ -42,12 +42,28 @@ public class UserOrderService : IUserOrderService
         return returnValue;
     }
 
-    public async Task<List<UniversalOrder>> GetOrders()
+    public async Task<List<UniversalOrderGetDto>> GetOrders()
     {
         var allOrders = await _universalOrderContext.UniversalOrders
-            
             .ToListAsync();
-        return allOrders;
+        var allOrderDtos = new List<UniversalOrderGetDto>();
+        var mapper = new MapperConfiguration(
+            cfg =>
+            {
+                cfg.CreateMap<UniversalOrder, UniversalOrderGetDto>()
+                    .ForMember(
+                        vm => vm.Currency,
+                        m => m.MapFrom(
+                            o => _universalOrderContext.Currencies.Find(o.CurrencyId).Name
+                        ));
+            }
+        ).CreateMapper();
+        foreach (var order in allOrders)
+        {
+            allOrderDtos.Add(mapper.Map<UniversalOrderGetDto>(order));
+        }
+
+        return allOrderDtos;
     }
 
     public async Task<string> PostUniversalOrder(UniversalOrderPostDto universalOrder)
@@ -74,8 +90,8 @@ public class UserOrderService : IUserOrderService
         var sth = await _universalOrderContext.Currencies
             .Include(b => b.UniversalOrders)
             .FirstOrDefaultAsync(b => b.Id == currency.Id);
-        
-        sth.UniversalOrders.Add(order);
+
+        sth?.UniversalOrders.Add(order);
         var res = await _universalOrderContext.SaveChangesAsync();
         return "Created transaction";
     }

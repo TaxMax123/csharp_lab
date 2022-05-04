@@ -1,8 +1,6 @@
-using System.ComponentModel.DataAnnotations.Schema;
+namespace WebApplication1.Dto;
 
-namespace WebApplication1.Models;
-
-public class UniversalOrder
+public class UniversalOrderGetDto
 {
     public int Id { get; set; }
     public string SenderName { get; set; } = null!;
@@ -17,10 +15,8 @@ public class UniversalOrder
     public string ReceiverIban { get; set; } = null!;
     public string ReceiverCall { get; set; } = null!;
     public string ReceiverModel { get; set; } = null!;
-    [ForeignKey("CurrencyId")]
-    public int CurrencyId { get; set; }
-    public virtual Currency Currency { get; set; } = null!;
-    
+    public string Currency { get; set; } = null!;
+
     public double Amount { get; set; }
     public bool Urgent { get; set; }
     public DateTime ExecutionDate { get; set; }

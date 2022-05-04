@@ -1,6 +1,6 @@
 ﻿@using System.Reflection
 @using WebApplication1.Models
-@model IEnumerable<WebApplication1.Models.UniversalOrder>
+@model IEnumerable<WebApplication1.Dto.UniversalOrderGetDto>
 
 <h1>All transactions </h1>
 
@@ -32,7 +32,7 @@
                 <td>@Html.DisplayFor(modelItem => item.SenderCall)</td>
                 <td>@Html.DisplayFor(modelItem => item.SenderModel)</td>
                 <td>@Html.DisplayFor(modelItem => item.Urgent)</td>
-                <td>@Html.DisplayFor(modelItem => item.Currency.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.Currency)</td>
                 <td>@Html.DisplayFor(modelItem => item.Amount)</td>
             </tr>
             <tr>
@@ -44,7 +44,7 @@
                 <td>@Html.DisplayFor(modelItem => item.ReceiverCall)</td>
                 <td>@Html.DisplayFor(modelItem => item.ReceiverModel)</td>
                 <td>@Html.DisplayFor(modelItem => item.Urgent)</td>
-                <td>@Html.DisplayFor(modelItem => item.Currency.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.Currency)</td>
                 <td>@Html.DisplayFor(modelItem => item.Amount)</td>
             </tr>
         }

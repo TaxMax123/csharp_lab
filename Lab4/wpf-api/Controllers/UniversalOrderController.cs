@@ -26,11 +26,11 @@ public class UniversalOrderController : Controller
     public async Task<List<string>> GetModels() => await _userOrderService.GetModels();
 
     [HttpGet]
-    [Route("api/orders")]
-    public async Task<List<UniversalOrder>> GetOrders() => await _userOrderService.GetOrders();
+    [Route("/api/orders")]
+    public async Task<List<UniversalOrderGetDto>> GetOrders() => await _userOrderService.GetOrders();
 
     [HttpGet]
-    [Route("api/ShowAllOrders")]
+    [Route("/api/ShowAllOrders")]
     public async Task<IActionResult> ShowAllOrders() => View("Index", await GetOrders());
     
     [HttpPost]
