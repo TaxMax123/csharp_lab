@@ -3,7 +3,7 @@ using System.Text.Json;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Context;
-using WebApplication1.Entities;
+using WebApplication1.Models;
 using WebApplication1.Dto;
 
 
@@ -42,6 +42,14 @@ public class UserOrderService : IUserOrderService
         return returnValue;
     }
 
+    public async Task<List<UniversalOrder>> GetOrders()
+    {
+        var allOrders = await _universalOrderContext.UniversalOrders
+            
+            .ToListAsync();
+        return allOrders;
+    }
+
     public async Task<string> PostUniversalOrder(UniversalOrderPostDto universalOrder)
     {
         var currency = await _universalOrderContext.Currencies.AsNoTracking()
@@ -63,7 +71,10 @@ public class UserOrderService : IUserOrderService
         var mapper = config.CreateMapper();
         var order = mapper.Map<UniversalOrder>(universalOrder);
 
-        var sth = await _universalOrderContext.Currencies.Include(b => b.UniversalOrders).FirstAsync();
+        var sth = await _universalOrderContext.Currencies
+            .Include(b => b.UniversalOrders)
+            .FirstOrDefaultAsync(b => b.Id == currency.Id);
+        
         sth.UniversalOrders.Add(order);
         var res = await _universalOrderContext.SaveChangesAsync();
         return "Created transaction";

@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using WebApplication1.Entities;
+using WebApplication1.Models;
 
 namespace WebApplication1.Context;
 
@@ -11,7 +11,7 @@ public class UniversalOrderContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer("server=localhost;database=cs_lab;user=sa;password=12345678");
+        optionsBuilder.UseSqlServer("server=localhost;database=cs_lab;user=sa;password=12345678_Sql");
         optionsBuilder.EnableDetailedErrors();
         optionsBuilder.EnableSensitiveDataLogging();
     }
