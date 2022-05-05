@@ -47,6 +47,39 @@ public class UniversalOrderController : Controller
         return View("Index",sortedOrders);
     }
 
+    [HttpGet]
+    [Route("/api/FilteredOrders")]
+    public async Task<IActionResult> FilteredOrders(string filterBy, string? name,int? amount)
+    {
+        var allOrders = await GetOrders();
+        if (filterBy == "SenderName")
+        {
+            var filteredOrders = allOrders.Where(e => e.SenderName == name);
+            return View("Index",filteredOrders);
+        }
+
+        if (filterBy == "ReceiverName")
+        { 
+            var filteredOrders = allOrders.Where(e => e.ReceiverName == name);
+            return View("Index",filteredOrders);
+        }
+        if (filterBy == ">amount")
+        {
+            var filteredOrders = allOrders.Where(e => e.Amount >= amount);
+            return View("Index",filteredOrders);
+        }
+        if (filterBy == "<amount")
+        {
+            var filteredOrders = allOrders.Where(e => e.Amount <= amount);
+            return View("Index",filteredOrders);
+        }
+        else
+        {
+            var filteredOrders = allOrders;
+            return View("Index",filteredOrders);
+        }
+    }
+
     [HttpPost]
     [Route("/api/new")]
     public async Task<string> PostOrder(UniversalOrderPostDto universalOrder) =>
