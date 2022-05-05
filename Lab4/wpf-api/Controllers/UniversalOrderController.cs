@@ -32,7 +32,21 @@ public class UniversalOrderController : Controller
     [HttpGet]
     [Route("/api/ShowAllOrders")]
     public async Task<IActionResult> ShowAllOrders() => View("Index", await GetOrders());
-    
+
+    [HttpGet]
+    [Route("/api/SortedOrders")]
+    public async Task<IActionResult> SortedOrders(string param)
+    {
+        var allOrders = await GetOrders();
+        var sortedOrders = allOrders.OrderBy(e => e.SenderName);
+        
+        if (param == "amount")
+        {
+            sortedOrders = allOrders.OrderBy(e => e.Amount);
+        }
+        return View("Index",sortedOrders);
+    }
+
     [HttpPost]
     [Route("/api/new")]
     public async Task<string> PostOrder(UniversalOrderPostDto universalOrder) =>

@@ -1,19 +1,22 @@
-﻿@using System.Reflection
-@using WebApplication1.Models
+﻿
 @model IEnumerable<WebApplication1.Dto.UniversalOrderGetDto>
+
 
 <h1>All transactions </h1>
 
 <table border="1">
     <thead>
     <tr>
-        <th></th>
-        <th>Name</th>
-        <th>Surname</th>
-        <th>Address</th>
-        <th>IBAN</th>
-        <th>Call</th>
-        <th>Model</th>
+        <th>Sender</th>
+        <th>Sender Address</th>
+        <th>Sender IBAN</th>
+        <th>Sender Call</th>
+        <th>Sender Model</th>
+        <th>Receiver</th>
+        <th>Receiver Address</th>
+        <th>Receiver IBAN</th>
+        <th>Receiver Call</th>
+        <th>Receiver Model</th>
         <th>Urgent</th>
         <th>Currency</th>
         <th>Amount</th>
@@ -24,21 +27,12 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>Sender</td>
-                <td>@Html.DisplayFor(modelItem => item.SenderName)</td>
-                <td>@Html.DisplayFor(modelItem => item.SenderSurname)</td>
+                <td>@Html.DisplayFor(modelItem => item.SenderName) @Html.DisplayFor(modelItem => item.SenderSurname)</td>
                 <td>@Html.DisplayFor(modelItem => item.SenderAddress)</td>
                 <td>@Html.DisplayFor(modelItem => item.SenderIban)</td>
                 <td>@Html.DisplayFor(modelItem => item.SenderCall)</td>
                 <td>@Html.DisplayFor(modelItem => item.SenderModel)</td>
-                <td>@Html.DisplayFor(modelItem => item.Urgent)</td>
-                <td>@Html.DisplayFor(modelItem => item.Currency)</td>
-                <td>@Html.DisplayFor(modelItem => item.Amount)</td>
-            </tr>
-            <tr>
-                <td>Reciever</td>
-                <td>@Html.DisplayFor(modelItem => item.ReceiverName)</td>
-                <td>@Html.DisplayFor(modelItem => item.ReceiverSurname)</td>
+                <td>@Html.DisplayFor(modelItem => item.ReceiverName) @Html.DisplayFor(modelItem => item.ReceiverSurname)</td>
                 <td>@Html.DisplayFor(modelItem => item.ReceiverAddress)</td>
                 <td>@Html.DisplayFor(modelItem => item.ReceiverIban)</td>
                 <td>@Html.DisplayFor(modelItem => item.ReceiverCall)</td>
