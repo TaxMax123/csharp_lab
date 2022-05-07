@@ -12,11 +12,22 @@ namespace WebApplication1.Services;
 public class UserOrderService : IUserOrderService
 {
     private readonly UniversalOrderContext _universalOrderContext;
-
+    private IMapper _mapper;
 
     public UserOrderService(UniversalOrderContext universalOrderContext)
     {
         _universalOrderContext = universalOrderContext;
+        _mapper = new MapperConfiguration(
+            cfg =>
+            {
+                cfg.CreateMap<UniversalOrder, UniversalOrderGetDto>()
+                    .ForMember(
+                        vm => vm.Currency,
+                        m => m.MapFrom(
+                            o => _universalOrderContext.Currencies.Find(o.CurrencyId)!.Name
+                        ));
+            }
+        ).CreateMapper();
     }
 
     public async Task<List<string>> GetModels()
@@ -33,37 +44,15 @@ public class UserOrderService : IUserOrderService
     public async Task<List<string>> GetCurrencies()
     {
         var allCurrencies = await _universalOrderContext.Currencies.ToListAsync();
-        var returnValue = new List<string>();
-        foreach (var allCurrency in allCurrencies)
-        {
-            returnValue.Add(allCurrency.Name);
-        }
-
-        return returnValue;
+        return allCurrencies.Select(allCurrency => allCurrency.Name).ToList();
     }
 
     public async Task<List<UniversalOrderGetDto>> GetOrders()
     {
         var allOrders = await _universalOrderContext.UniversalOrders
             .ToListAsync();
-        var allOrderDtos = new List<UniversalOrderGetDto>();
-        var mapper = new MapperConfiguration(
-            cfg =>
-            {
-                cfg.CreateMap<UniversalOrder, UniversalOrderGetDto>()
-                    .ForMember(
-                        vm => vm.Currency,
-                        m => m.MapFrom(
-                            o => _universalOrderContext.Currencies.Find(o.CurrencyId).Name
-                        ));
-            }
-        ).CreateMapper();
-        foreach (var order in allOrders)
-        {
-            allOrderDtos.Add(mapper.Map<UniversalOrderGetDto>(order));
-        }
 
-        return allOrderDtos;
+        return allOrders.Select(order => _mapper.Map<UniversalOrderGetDto>(order)).ToList();
     }
 
     public async Task<string> PostUniversalOrder(UniversalOrderPostDto universalOrder)
@@ -94,5 +83,44 @@ public class UserOrderService : IUserOrderService
         sth?.UniversalOrders.Add(order);
         var res = await _universalOrderContext.SaveChangesAsync();
         return "Created transaction";
+    }
+
+    public async Task<List<UniversalOrderGetDto>> GetSortedOrders(string param)
+    {
+        var allOrders = await GetOrders();
+        var sortedOrders = param == "amount" ? allOrders.OrderBy(e => e.Amount) : allOrders.OrderBy(e => e.SenderName);
+        return sortedOrders.ToList();
+    }
+
+    public async Task<List<UniversalOrderGetDto>> GetFilteredOrders(string filterBy, string? name, int? amount)
+    {
+        var allOrders = await GetOrders();
+        switch (filterBy)
+        {
+            case "SenderName":
+            {
+                var filteredOrders = allOrders.Where(e => e.SenderName == name);
+                return filteredOrders.ToList();
+            }
+            case "ReceiverName":
+            {
+                var filteredOrders = allOrders.Where(e => e.ReceiverName == name);
+                return filteredOrders.ToList();
+            }
+            case ">amount":
+            {
+                var filteredOrders = allOrders.Where(e => e.Amount >= amount);
+                return filteredOrders.ToList();
+            }
+            case "<amount":
+            {
+                var filteredOrders = allOrders.Where(e => e.Amount <= amount);
+                return filteredOrders.ToList();
+            }
+            default:
+            {
+                return allOrders;
+            }
+        }
     }
 }
